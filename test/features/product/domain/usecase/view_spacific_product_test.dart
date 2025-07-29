@@ -4,7 +4,8 @@ import 'package:ecommerce_app/features/product/domain/usecases/view_spacific_pro
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import '../../../../mocks/mock_product_repository.mocks.dart';
+import '../mock_product_repository.mocks.dart';
+
 
 void main() {
   late ViewProductUsecase usecase;

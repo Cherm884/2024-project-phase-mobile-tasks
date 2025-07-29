@@ -6,7 +6,8 @@ import 'package:ecommerce_app/features/product/domain/usecases/view_all_product.
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import '../../../../mocks/mock_product_repository.mocks.dart';
+import '../mock_product_repository.mocks.dart';
+
 
 
 

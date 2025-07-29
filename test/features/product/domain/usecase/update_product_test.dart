@@ -4,7 +4,7 @@ import 'package:ecommerce_app/features/product/domain/usecases/update_product.da
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import '../../../../mocks/mock_product_repository.mocks.dart';
+import '../mock_product_repository.mocks.dart';
 
 void main() {
   late UpdateProductUsecase usecase;

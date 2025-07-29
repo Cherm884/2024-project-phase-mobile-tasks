@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:dartz/dartz.dart';
 import 'package:ecommerce_app/core/error/exceptions.dart';
-import 'package:ecommerce_app/core/platform/network_info.dart';
+import 'package:ecommerce_app/core/network/network_info.dart';
 import 'package:ecommerce_app/features/product/data/datasources/product_local_data_source.dart';
 import 'package:ecommerce_app/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:ecommerce_app/features/product/data/models/product_model.dart';
