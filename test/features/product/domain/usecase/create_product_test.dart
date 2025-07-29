@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:ecommerce_app/core/usecase/usecase.dart';
 import 'package:ecommerce_app/features/product/domain/entites/product.dart';
 import 'package:ecommerce_app/features/product/domain/usecases/create_product.dart';
 import 'package:mockito/mockito.dart';
