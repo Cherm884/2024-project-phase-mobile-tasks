@@ -1,11 +1,13 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/platform/network_info.dart';
 import '../../domain/entites/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_local_data_source.dart';
 import '../datasources/product_remote_data_source.dart';
+import '../models/product_model.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource remoteDataSource;
@@ -19,7 +21,6 @@ class ProductRepositoryImpl implements ProductRepository {
   });
   @override
   Future<Either<Failure, Unit>> createProduct(Product product) {
-    // TODO: implement createProduct
     throw UnimplementedError();
   }
 
@@ -30,9 +31,23 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, List<Product>>> getAllProducts() {
-    // TODO: implement getAllProducts
-    throw UnimplementedError();
+  Future<Either<Failure, List<Product>>> getAllProducts() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remote = await remoteDataSource.getAllProducts();
+        await localDataSource.cacheProduct(remote as ProductModel);
+        return Right(remote);
+      } on ServerException {
+        return const Left(ServerFailure('Failed to fetch data from server'));
+      }
+    } else {
+      try {
+        final local = await localDataSource.getLastProduct();
+        return Right(local as List<Product>);
+      } on CacheException {
+        return const Left(CacheFailure('fail the cache'));
+      }
+    }
   }
 
   @override
