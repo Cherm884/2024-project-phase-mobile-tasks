@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 import 'dart:math';
 
 import 'package:dartz/dartz.dart';
@@ -56,15 +56,15 @@ void main() {
     }
 
     group('getAllProducts', () {
-      final tProductModel = ProductModel(
+      final tProductModel = [ProductModel(
         id: '2',
         name: 'Prod2',
         description: 'Desc2',
         price: 30,
         imageUrl: 'url2.png',
-      );
+      )];
 
-      final List<ProductModel> tProductModelList = [tProductModel];
+      final List<ProductModel> tProductModelList = tProductModel;
       final List<Product> tProductList = tProductModelList;
 
       test('should check if the device is online', () async {
@@ -107,7 +107,7 @@ void main() {
 
             // assert
             verify(mockRemoteDataSource.getAllProducts());
-            verify(mocklocalDataSource.cacheProduct(tProductModel));
+            verify(mocklocalDataSource.cacheProduct(tProductModel as List<ProductModel>));
             test(
               'should return server failure when the call to remote data source is unsuccessful',
               () async {
@@ -134,12 +134,12 @@ void main() {
             'should return last locally cached date when the cached data is present',
             () async {
               when(
-                mocklocalDataSource.getLastProduct(),
+                mocklocalDataSource.getCachedProducts(),
               ).thenAnswer((_) async => tProductModel);
 
               final result = await repository.getAllProducts();
               verifyZeroInteractions(mockRemoteDataSource);
-              verify(mocklocalDataSource.getLastProduct());
+              verify(mocklocalDataSource.getCachedProducts());
               expect(result, equals(right(tProductList)));
             },
           );
@@ -148,13 +148,13 @@ void main() {
             'should return CacheFailure when there is no cached data present',
             () async {
               when(
-                mocklocalDataSource.getLastProduct(),
+                mocklocalDataSource.getCachedProducts(),
               ).thenThrow(CacheException());
 
               final result = await repository.getAllProducts();
 
               verifyZeroInteractions(mockRemoteDataSource);
-              verify(mocklocalDataSource.getLastProduct());
+              verify(mocklocalDataSource.getCachedProducts());
               expect(result, equals(Left(tProductList)));
             },
           );
