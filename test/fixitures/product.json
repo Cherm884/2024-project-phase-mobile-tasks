@@ -1,0 +1,37 @@
+[
+    {
+      "id": "p001",
+      "name": "Wireless Headphones",
+      "description": "Bluetooth over-ear headphones with noise cancellation",
+      "price": 79.99,
+      "imageUrl": "https://example.com/images/headphones.jpg"
+    },
+    {
+      "id": "p002",
+      "name": "Smart Watch",
+      "description": "Fitness tracker with heart rate monitor and GPS",
+      "price": 129.50,
+      "imageUrl": "https://example.com/images/smartwatch.jpg"
+    },
+    {
+      "id": "p003",
+      "name": "Gaming Mouse",
+      "description": "Ergonomic gaming mouse with RGB lighting",
+      "price": 49.99,
+      "imageUrl": "https://example.com/images/mouse.jpg"
+    },
+    {
+      "id": "p004",
+      "name": "Laptop Stand",
+      "description": "Aluminum adjustable stand for laptops up to 17 inches",
+      "price": 34.95,
+      "imageUrl": "https://example.com/images/laptop-stand.jpg"
+    },
+    {
+      "id": "p005",
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with brown switches",
+      "price": 89.00,
+      "imageUrl": "https://example.com/images/keyboard.jpg"
+    }
+  ]

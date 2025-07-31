@@ -78,24 +78,24 @@ void main() {
         
 
         test(
-          'should return remote data when the call to remote data source is successful',
+          'should return updated product',
           () async {
             // arrange
             when(
-              mockRemoteDataSource.getAllProducts(),
-            ).thenAnswer((_) async => tProductModelList);
+              mockRemoteDataSource.updateProduct(tProductList[0]),
+            ).thenAnswer((_) async => Future.value(unit));
 
             // act
-            final result = await repository.getAllProducts();
+            final result = await repository.updateProduct(tProductList[0]);
 
             // assert
-            verify(mockRemoteDataSource.getAllProducts());
+            verify(mockRemoteDataSource.updateProduct(tProductList[0]));
             expect(result, Right(tProductList));
           },
         );
 
         test(
-          'should cache the data locally when the call to remote data source is successful',
+          'should return remote products when online',
           () async {
             // arrange
             when(
@@ -108,19 +108,39 @@ void main() {
             // assert
             verify(mockRemoteDataSource.getAllProducts());
             verify(mocklocalDataSource.cacheProduct(tProductModel as List<ProductModel>));
+
+
             test(
-              'should return server failure when the call to remote data source is unsuccessful',
+              'should return created product',
               () async {
                 // arrange
                 when(
-                  mockRemoteDataSource.getAllProducts(),
+                  mockRemoteDataSource.createProduct(tProductList[0]),
                 ).thenThrow(ServerException(e.toString()));
 
                 // act
-                final result = await repository.getAllProducts();
+                final result = await repository.createProduct(tProductList[0]);
 
                 // assert
-                verify(mockRemoteDataSource.getAllProducts());
+                verify(mockRemoteDataSource.createProduct(tProductList[0]));
+                verifyZeroInteractions(mocklocalDataSource);
+                expect(result, Left(CacheException()));
+              },
+            );
+
+          test(
+              'should delete product',
+              () async {
+                // arrange
+                when(
+                  mockRemoteDataSource.deleteProduct('1'),
+                ).thenThrow(ServerException(e.toString()));
+
+                // act
+                final result = await repository.deleteProduct('1');
+
+                // assert
+                verify(mockRemoteDataSource.deleteProduct('1'));
                 verifyZeroInteractions(mocklocalDataSource);
                 expect(result, Left(CacheException()));
               },

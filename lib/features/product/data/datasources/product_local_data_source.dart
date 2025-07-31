@@ -6,13 +6,8 @@ import '../models/product_model.dart';
 const cachedProductListKey = 'CACHED_PRODUCT_LIST';
 
 abstract class ProductLocalDataSource {
-  /// Gets the cached [List<ProductModel>] which was fetched
-  /// the last time the user had an internet connection.
-  ///
-  /// Throws [CacheException] if no cached data is present.
+  
   Future<List<ProductModel>> getCachedProducts();
-
-  /// Caches a list of [ProductModel] locally.
   Future<void> cacheProduct(List<ProductModel> productsToCache);
 }
 

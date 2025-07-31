@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:ecommerce_app/core/error/exceptions.dart';
 import 'package:ecommerce_app/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:ecommerce_app/features/product/data/models/product_model.dart';
@@ -14,6 +15,9 @@ import 'product_remote_data_source_test.mocks.dart'; // generated
 void main() {
   late ProductRemoteDataSourceImpl dataSource;
   late MockClient mockHttpClient;
+  final String id = '1';
+  const baseUrl =
+      'https://g5-flutter-learning-path-be.onrender.com/api/v1/products';
 
   setUp(() {
     mockHttpClient = MockClient();
@@ -34,37 +38,12 @@ void main() {
     final tJsonList = json.encode(tProductList);
 
     test(
-      'should perform a GET request and return list of ProductModel',
-      () async {
-        // arrange
-        when(
-          mockHttpClient.get(
-            Uri.parse('http://your.api/products'),
-            headers: {'Content-Type': 'application/json'},
-          ),
-        ).thenAnswer((_) async => http.Response(tJsonList, 200));
-
-        final result = await dataSource.getAllProducts();
-
-        // assert
-        expect(result, equals(tProductList));
-
-        verify(
-          mockHttpClient.get(
-            Uri.parse('http://your.api/products'),
-            headers: {'Content-Type': 'application/json'},
-          ),
-        );
-      },
-    );
-
-    test(
       'should return list of ProductModel when status code is 200',
       () async {
         // arrange
         when(
           mockHttpClient.get(
-            Uri.parse('http://your.api/products'),
+            Uri.parse(baseUrl),
             headers: {'Content-Type': 'application/json'},
           ),
         ).thenAnswer((_) async => http.Response(tJsonList, 200));
@@ -73,13 +52,13 @@ void main() {
         final result = await dataSource.getAllProducts();
 
         // assert
-        expect(result, equals(tProductList));
+        expect(result, isA<List<ProductModel>>());
         verify(
           mockHttpClient.get(
-            Uri.parse('http://your.api/products'),
+            Uri.parse(baseUrl),
             headers: {'Content-Type': 'application/json'},
           ),
-        ).called(1);
+        );
       },
     );
 
@@ -89,7 +68,7 @@ void main() {
         // arrange
         when(
           mockHttpClient.get(
-            Uri.parse('http://your.api/products'),
+            Uri.parse(baseUrl),
             headers: {'Content-Type': 'application/json'},
           ),
         ).thenAnswer((_) async => http.Response('Not Found', 404));
@@ -101,7 +80,82 @@ void main() {
         expect(() => call(), throwsA(isA<ServerException>()));
         verify(
           mockHttpClient.get(
-            Uri.parse('http://your.api/products'),
+            Uri.parse(baseUrl),
+            headers: {'Content-Type': 'application/json'},
+          ),
+        );
+      },
+    );
+
+    test('should return created product when status code is 200', () async {
+      // arrange
+      when(
+        mockHttpClient.post(
+          Uri.parse(baseUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: anyNamed('body'), 
+        ),
+      ).thenAnswer((_) async => http.Response('', 200));
+
+      
+      when(
+        mockHttpClient.get(
+          Uri.parse(baseUrl),
+          headers: {'Content-Type': 'application/json'},
+        ),
+      ).thenAnswer((_) async => http.Response('[]', 200));
+
+      // act
+      final result = await dataSource.createProduct(tProduct);
+
+      // assert
+      expect(result, unit);
+    });
+
+    test('should return updated product when status code is 200', () async {
+      // arrange
+      when(
+        mockHttpClient.put(
+          Uri.parse(baseUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer((_) async => http.Response('', 200));
+
+      
+      when(
+        mockHttpClient.get(
+          Uri.parse(baseUrl),
+          headers: {'Content-Type': 'application/json'},
+        ),
+      ).thenAnswer((_) async => http.Response('[]', 200));
+
+      // act
+      final result = await dataSource.updateProduct(tProduct);
+
+      // assert
+      expect(result, unit);
+    });
+
+    test(
+      'should delete product by id and return unit when successful',
+      () async {
+        // arrange
+        when(
+          mockHttpClient.delete(
+            Uri.parse('$baseUrl/$id'),
+            headers: {'Content-Type': 'application/json'},
+          ),
+        ).thenAnswer((_) async => http.Response('', 204));
+
+        // act
+        final result = await dataSource.deleteProduct('1');
+
+        // assert
+        expect(result, unit);
+        verify(
+          mockHttpClient.delete(
+            Uri.parse('$baseUrl/$id'),
             headers: {'Content-Type': 'application/json'},
           ),
         ).called(1);

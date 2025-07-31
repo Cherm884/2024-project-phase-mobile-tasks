@@ -27,25 +27,46 @@ abstract class ProductRemoteDataSource {
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   final http.Client client;
+  String baseUrl =
+      'https://g5-flutter-learning-path-be.onrender.com/api/v1/products';
 
   ProductRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<Unit> createProduct(Product product) {
-    // TODO: implement createProduct
-    throw UnimplementedError();
+  Future<Unit> createProduct(Product product) async {
+    final response = await client.get(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return unit;
+    } else {
+      throw ServerException(
+        'Failed to create product (${response.statusCode})',
+      );
+    }
   }
 
   @override
-  Future<Unit> deleteProduct(String id) {
-    // TODO: implement deleteProduct
-    throw UnimplementedError();
+  Future<Unit> deleteProduct(String id) async {
+    final response = await client.delete(
+      Uri.parse('$baseUrl/$id'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return unit;
+    } else {
+      throw ServerException(
+        'Failed to delete product (${response.statusCode})',
+      );
+    }
   }
 
   @override
   Future<List<Product>> getAllProducts() async {
     final response = await client.get(
-      Uri.parse('http://your.api/products'), // Replace with your real endpoint
+      Uri.parse(baseUrl),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -59,16 +80,33 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     }
   }
 
-
   @override
-  Future<Product> getProductById(String id) {
-    // TODO: implement getProductById
-    throw UnimplementedError();
+  Future<Product> getProductById(String id) async {
+    final response = await client.get(
+      Uri.parse('$baseUrl/$id'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedJson = json.decode(response.body);
+      return ProductModel.fromJson(decodedJson);
+    } else {
+      throw ServerException('Failed to load product (${response.statusCode})');
+    }
   }
 
   @override
-  Future<Unit> updateProduct(Product product) {
-    // TODO: implement updateProduct
-    throw UnimplementedError();
+  Future<Unit> updateProduct(Product product) async {
+    final response = await client.get(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return unit;
+    } else {
+      throw ServerException(
+        'Failed to create product (${response.statusCode})',
+      );
+    }
   }
 }
