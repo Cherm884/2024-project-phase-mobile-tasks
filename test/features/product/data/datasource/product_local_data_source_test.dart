@@ -6,8 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'product_local_data_source.mocks.dart';
+import 'product_local_data_source_test.mocks.dart';
 
 
 
