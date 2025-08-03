@@ -4,6 +4,7 @@ import '../../../../core/usecase/usecase.dart';
 import '../entites/product.dart';
 import '../repositories/product_repository.dart';
 
+
 class CreateProductUsecase extends UseCase<void, Product>{
   final ProductRepository repository;
 
