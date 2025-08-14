@@ -82,14 +82,14 @@ void main() {
           () async {
             // arrange
             when(
-              mockRemoteDataSource.updateProduct(tProductList[0]),
+              mockRemoteDataSource.updateProduct(tProductList[0],tProductList[0].id),
             ).thenAnswer((_) async => Future.value(unit));
 
             // act
-            final result = await repository.updateProduct(tProductList[0]);
+            final result = await repository.updateProduct(tProductList[0],tProductList[0].id);
 
             // assert
-            verify(mockRemoteDataSource.updateProduct(tProductList[0]));
+            verify(mockRemoteDataSource.updateProduct(tProductList[0],tProductList[0].id));
             expect(result, Right(tProductList));
           },
         );
@@ -107,7 +107,7 @@ void main() {
 
             // assert
             verify(mockRemoteDataSource.getAllProducts());
-            verify(mocklocalDataSource.cacheProduct(tProductModel as List<ProductModel>));
+            verify(mocklocalDataSource.cacheProduct(tProductModel));
 
 
             test(
@@ -115,14 +115,14 @@ void main() {
               () async {
                 // arrange
                 when(
-                  mockRemoteDataSource.createProduct(tProductList[0]),
+                  mockRemoteDataSource.createProduct(tProductList[0],tProductList[0].id),
                 ).thenThrow(ServerException(e.toString()));
 
                 // act
-                final result = await repository.createProduct(tProductList[0]);
+                final result = await repository.createProduct(tProductList[0],tProductList[0].id);
 
                 // assert
-                verify(mockRemoteDataSource.createProduct(tProductList[0]));
+                verify(mockRemoteDataSource.createProduct(tProductList[0],tProductList[0].id));
                 verifyZeroInteractions(mocklocalDataSource);
                 expect(result, Left(CacheException()));
               },

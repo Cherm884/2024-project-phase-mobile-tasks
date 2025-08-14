@@ -15,7 +15,7 @@ void main() {
     usecase = UpdateProductUsecase(mockRepo);
   });
 
-  final product = Product(
+  const product = Product(
     id: '1',
     name: 'Updated',
     description: 'New Desc',
@@ -23,13 +23,22 @@ void main() {
     imageUrl: 'http://image.com/updated.jpg',
   );
 
+  final params = UpdateProductParams(
+    product: product,
+    id: '1',
+  );
+
   test('should update product via repository', () async {
-    when(mockRepo.updateProduct(product)).thenAnswer((_) async => const Right(unit));
+    // Arrange
+    when(mockRepo.updateProduct(product, '1'))
+        .thenAnswer((_) async => const Right(unit));
 
-    final result = await usecase(product);
+    // Act
+    final result = await usecase(params);
 
-    expect(result, (const Right(unit)));
-    verify(mockRepo.updateProduct(product));
+    // Assert
+    expect(result, const Right(unit));
+    verify(mockRepo.updateProduct(product, '1'));
     verifyNoMoreInteractions(mockRepo);
   });
 }

@@ -17,7 +17,7 @@ void main() {
   late MockClient mockHttpClient;
   final String id = '1';
   const baseUrl =
-      'https://g5-flutter-learning-path-be.onrender.com/api/v1/products';
+      'https://g5-flutter-learning-path-be-tvum.onrender.com/api/v1/products';
 
   setUp(() {
     mockHttpClient = MockClient();
@@ -93,11 +93,10 @@ void main() {
         mockHttpClient.post(
           Uri.parse(baseUrl),
           headers: {'Content-Type': 'application/json'},
-          body: anyNamed('body'), 
+          body: anyNamed('body'),
         ),
       ).thenAnswer((_) async => http.Response('', 200));
 
-      
       when(
         mockHttpClient.get(
           Uri.parse(baseUrl),
@@ -106,7 +105,7 @@ void main() {
       ).thenAnswer((_) async => http.Response('[]', 200));
 
       // act
-      final result = await dataSource.createProduct(tProduct);
+      final result = await dataSource.createProduct(tProduct,tProduct.id);
 
       // assert
       expect(result, unit);
@@ -122,7 +121,6 @@ void main() {
         ),
       ).thenAnswer((_) async => http.Response('', 200));
 
-      
       when(
         mockHttpClient.get(
           Uri.parse(baseUrl),
@@ -131,7 +129,7 @@ void main() {
       ).thenAnswer((_) async => http.Response('[]', 200));
 
       // act
-      final result = await dataSource.updateProduct(tProduct);
+      final result = await dataSource.updateProduct(tProduct,tProduct.id);
 
       // assert
       expect(result, unit);

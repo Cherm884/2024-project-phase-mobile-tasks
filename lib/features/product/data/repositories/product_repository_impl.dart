@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
@@ -41,10 +42,10 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> createProduct(Product product) async {
+  Future<Either<Failure, Unit>> createProduct(Product product,String imagePath) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.createProduct(product);
+        await remoteDataSource.createProduct(product,imagePath);
         return const Right(unit);
       } on ServerException {
         return const Left(ServerFailure('Failed to create product on server'));
@@ -68,26 +69,30 @@ class ProductRepositoryImpl implements ProductRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, Product>> getProductById(String id) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final productModel = await remoteDataSource.getProductById(id);
-        return Right(productModel);
-      } on ServerException {
-        return const Left(ServerFailure('Failed to fetch product details'));
-      }
-    } else {
-      return const Left(ServerFailure('No internet connection'));
+@override
+Future<Either<Failure, Product>> getProductById(String id) async {
+  
+  if (await networkInfo.isConnected) {
+    try {
+      final product = await remoteDataSource.getProductById(id);
+      return Right(product);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.toString()));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error: $e'));
     }
+  } else {
+    debugPrint('[ProductRepository] No network connection');
+    return const Left(ServerFailure('No internet connection'));
   }
+}
 
   @override
-  Future<Either<Failure, Unit>> updateProduct(Product product) async {
+  Future<Either<Failure, Unit>> updateProduct(Product product,String id) async {
     if (await networkInfo.isConnected) {
       try {
 
-        await remoteDataSource.updateProduct(product);
+        await remoteDataSource.updateProduct(product,id);
         return const Right(unit);
       } on ServerException {
         return const Left(ServerFailure('Failed to update product'));

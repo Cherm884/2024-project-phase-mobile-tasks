@@ -14,22 +14,31 @@ void main() {
     mockRepository = MockProductRepository();
     usecase = CreateProductUsecase(mockRepository);
   });
-  final product = Product(
+
+  const product = Product(
     id: '1',
     name: 'Test',
     description: 'Desc',
     price: 100.0,
     imageUrl: 'http://image.com/test.jpg',
   );
+
+  final params = CreateProductParams(
+    product: product,
+    imagePath: 'path/to/image.jpg',
+  );
+
   test('should insert product via repository', () async {
-    when(
-      mockRepository.createProduct(product),
-    ).thenAnswer((_) async => const Right(unit));
+    // Arrange
+    when(mockRepository.createProduct(product, 'path/to/image.jpg'))
+        .thenAnswer((_) async => const Right(unit));
 
-    final result = await usecase(product);
+    // Act
+    final result = await usecase(params);
 
-    expect(result,  const Right(unit));
-    verify(mockRepository.createProduct(product));
+    // Assert
+    expect(result, const Right(unit));
+    verify(mockRepository.createProduct(product, 'path/to/image.jpg'));
     verifyNoMoreInteractions(mockRepository);
   });
 }

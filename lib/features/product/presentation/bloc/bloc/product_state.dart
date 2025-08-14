@@ -38,3 +38,14 @@ class ErrorState extends ProductState {
   @override
   List<Object> get props => [message];
 }
+
+class DeleteSuccessState extends ProductState {
+  final String deletedId;
+
+  const DeleteSuccessState(this.deletedId);
+
+  @override
+  List<Object> get props => [deletedId];
+}
+
+class ProductSuccess extends ProductState{}

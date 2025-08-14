@@ -19,12 +19,17 @@ class GetSingleProductEvent extends ProductEvent {
 }
 
 class UpdateProductEvent extends ProductEvent {
-  final Product product;
+  final String id;
+  final String name;
+  final String description;
+  final double price;
 
-  const UpdateProductEvent(this.product);
-
-  @override
-  List<Object> get props => [product];
+  const UpdateProductEvent({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+  });
 }
 
 class DeleteProductEvent extends ProductEvent {
@@ -37,10 +42,15 @@ class DeleteProductEvent extends ProductEvent {
 }
 
 class CreateProductEvent extends ProductEvent {
-  final Product product;
+  final String name;
+  final String description;
+  final double price;
+  final String imagePath;
 
-  const CreateProductEvent(this.product);
-
-  @override
-  List<Object> get props => [product];
+  const CreateProductEvent({
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imagePath,
+  });
 }

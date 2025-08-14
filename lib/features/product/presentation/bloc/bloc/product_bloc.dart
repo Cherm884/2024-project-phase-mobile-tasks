@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../../core/usecase/usecase.dart';
 import '../../../domain/entites/product.dart';
 import '../../../domain/usecases/create_product.dart';
@@ -25,7 +26,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     required this.createProductUsecase,
     required this.updateProductUsecase,
     required this.deleteProductUsecase,
-    
   }) : super(ProductInitial()) {
     on<LoadAllProductsEvent>(_onLoadAllProducts);
     on<GetSingleProductEvent>(_onGetSingleProduct);
@@ -39,11 +39,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(LoadingState());
-    final result = await viewAllProductsUsecase(NoParams());
-    result.fold(
-      (failure) => emit(ErrorState(failure.message)),
-      (products) => emit(LoadedAllProductsState(products)),
-    );
+
+    try {
+      final result = await viewAllProductsUsecase(NoParams());
+      result.fold(
+        (failure) {
+          emit(ErrorState(failure.message));
+        },
+        (products) {
+          emit(LoadedAllProductsState(products));
+        },
+      );
+    } catch (e) {
+      emit(const ErrorState('Unexpected error occurred'));
+    }
   }
 
   Future<void> _onGetSingleProduct(
@@ -51,11 +60,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(LoadingState());
-    final result = await viewProductUsecase(event.id);
-    result.fold(
-      (failure) => emit(ErrorState(failure.message)),
-      (product) => emit(LoadedSingleProductState(product)),
-    );
+    try {
+      final result = await viewProductUsecase(event.id);
+
+      result.fold(
+        (failure) {
+          emit(ErrorState(failure.message));
+        },
+        (product) {
+          emit(LoadedSingleProductState(product));
+        },
+      );
+    } catch (e) {
+      emit(ErrorState('Unexpected error: $e'));
+    }
   }
 
   Future<void> _onCreateProduct(
@@ -63,11 +81,23 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(LoadingState());
-    final result = await createProductUsecase(event.product);
-    result.fold(
-      (failure) => emit(ErrorState(failure.message)),
-      (_) => add(LoadAllProductsEvent()),
+
+    final product = Product(
+      id: '',
+      name: event.name,
+      description: event.description,
+      price: event.price,
+      imageUrl: '',
     );
+
+    final result = await createProductUsecase.call(
+      CreateProductParams(product: product, imagePath: event.imagePath),
+    );
+
+    result.fold((failure) => emit(ErrorState(failure.message)), (_) {
+      emit(ProductSuccess());
+      add(LoadAllProductsEvent());
+    });
   }
 
   Future<void> _onUpdateProduct(
@@ -75,11 +105,23 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(LoadingState());
-    final result = await updateProductUsecase(event.product);
-    result.fold(
-      (failure) => emit(ErrorState(failure.message)),
-      (_) => add(LoadAllProductsEvent()),
+
+    final product = Product(
+      id: event.id,
+      name: event.name,
+      description: event.description,
+      price: event.price,
+      imageUrl: '',
     );
+
+    final result = await updateProductUsecase(
+      UpdateProductParams(product: product, id: event.id),
+    );
+
+    result.fold((failure) => emit(ErrorState(failure.message)), (_) {
+      emit(ProductSuccess());
+      add(LoadAllProductsEvent());
+    });
   }
 
   Future<void> _onDeleteProduct(
@@ -88,9 +130,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(LoadingState());
     final result = await deleteProductUsecase(event.id);
-    result.fold(
-      (failure) => emit(ErrorState(failure.message)),
-      (_) => add(LoadAllProductsEvent()),
-    );
+    result.fold((failure) => emit(ErrorState(failure.message)), (_) {
+      emit(DeleteSuccessState(event.id));
+      add(LoadAllProductsEvent());
+    });
   }
 }

@@ -1,7 +1,7 @@
 import '../../domain/entites/product.dart';
 
 class ProductModel extends Product {
-   ProductModel({
+  ProductModel({
     required super.id,
     required super.name,
     required super.description,
@@ -11,11 +11,11 @@ class ProductModel extends Product {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      price: (json['price'] as num).toDouble(),
-      imageUrl: json['imageUrl'] as String,
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      price: (json['price'] is num) ? (json['price'] as num).toDouble() : 0.0,
+      imageUrl: json['imageUrl']?.toString() ?? '',
     );
   }
 
